@@ -1,12 +1,20 @@
 import { useForm } from 'react-hook-form'
 import { List } from './List'
+import { default as api } from '../store/apiSlice'
+
 
 export function Form() {
 
-    const { register, handleSubmit } = useForm()
+    const { register, handleSubmit, resetField } = useForm()
+    const [addTranslation] = api.useAddTransactionMutation()
 
-    const onSubmit = (data) => {
-        console.log(data)
+    const onSubmit = async (data) => {
+        if (!data) return {}
+        await addTranslation(data).unwrap()
+        resetField('name')
+        resetField('amount')
+
+
     }
 
     return (
@@ -36,10 +44,10 @@ export function Form() {
 
                     <div className="input-group">
                         <input
-                            {...register('ammount')}
+                            {...register('amount')}
                             type="number"
                             step="0.01"
-                            placeholder="Ammount"
+                            placeholder="Amount"
                             className="form-input"
                         />
                     </div>

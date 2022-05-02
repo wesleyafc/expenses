@@ -1,28 +1,27 @@
+import { getLabels } from '../helper/helper';
+import { default as api } from '../store/apiSlice'
 
-
-const obj = [
-    {
-        type: "Savings",
-        color: "#10b981",
-        percentage: 45
-    },
-    {
-        type: "Investment",
-        color: "#0b79cd",
-        percentage: 5
-    },
-    {
-        type: "Expenses",
-        color: "#ff6385",
-        percentage: 50
-    }
-]
 
 
 export function Labels() {
+
+
+    const { data, isFetching, isSuccess, isError, } = api.useGetLabelsQuery()
+
+    let Transactions;
+
+    if (isFetching) {
+        Transactions = <div>Loading...</div>
+    } else if (isSuccess) {
+
+        Transactions = getLabels(data, 'type').map((item, index) => <LabelComponent key={index} data={item} />)
+    } else if (isError) {
+        Transactions = <div>Error</div>
+    }
+
     return (
         <>
-            {obj.map((item, index) => <LabelComponent key={index} data={item} />)}
+            {Transactions}
         </>
     )
 }
@@ -36,7 +35,7 @@ function LabelComponent({ data }) {
                 <h3 className="text-md">{data.type ?? ""}</h3>
             </div>
 
-            <h3 className="font-bold">{data.percentage ?? 0}%</h3>
+            <h3 className="font-bold">{Math.round(data.percent) ?? 0}%</h3>
         </div >
     )
 
